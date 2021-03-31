@@ -12,9 +12,28 @@ def calculate_loss(amount, duration, working_time):
     yourloss = 100 - (working_time/duration)*100
     amountloss = amount*(yourloss/100)
     return yourloss
+    
 
 
 @app.route("/")
+def login():
+    return render_template("login.html")
+    
+@app.route("/submit")
+def loginrecord():
+      msg = "msg"
+      username = request.form["Aavinash"]
+      password = request.form["9087828441"]
+      try:
+         password == "9087828441"
+         return render_template("index.html")
+      except:
+          msg = "Invalid Password"
+      finally:
+          return render_template("success.html", msg=msg)
+          
+    
+@app.route("/index")
 def index():
     return render_template("index.html")
 
@@ -76,6 +95,32 @@ def deleterecord():
             msg = "can't be deleted"
         finally:
             return render_template("delete_record.html", msg=msg)
+
+
+@app.route("/edit")
+def update():
+    return render_template("edit records.html")
+
+@app.route("/edit_record", methods = ["POST"])
+def updateSqliteTable():
+    msg = "msg"
+    name = request.form["name"]
+    id = int(request.form["id"])
+    amount = int(request.form["amount"])
+    duration = int(request.form["duration"])
+    working_time = int(request.form["working_time"])
+    try:
+        con = sqlite3.connect(DATABASE)
+        cursor = con.cursor()
+        sql_update_query = """Update BBINDEX_LOSS_PERCENT set name = ?,amount = ?,duration = ?,working_time = ? where ID = ?"""
+        data = (name, amount, duration, working_time, id)
+        cursor.execute(sql_update_query, data)
+        con.commit()
+        msg = "Successfully updated"
+    except sqlite3.Error as error:
+        msg = "Failed to update sqlite table"
+    finally:
+        return render_template("edit.html", msg=msg) 
 
 
 if __name__ == "__main__":
