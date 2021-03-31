@@ -12,10 +12,29 @@ def calculate_loss(amount, duration, working_time):
     yourloss = 100 - (working_time/duration)*100
     amountloss = amount*(yourloss/100)
     return yourloss
-
-
-
+    
 @app.route("/")
+def register():
+    return render_template("login.html")
+    
+@app.route('/login', methods=['POST'])
+def login():
+   username = request.form["Worker"]
+   password = request.form["Workerindex"]
+   if password == "Workerindex" :
+     return redirect(url_for('index'))
+   else:
+     msg = "Invalid username/password combination"
+     return render_template("successful.html", msg=msg)
+
+@app.route('/logout')
+def logout():
+   return redirect(url_for('register'))
+
+
+
+
+@app.route("/index")
 def index():
     return render_template("index.html")
 
